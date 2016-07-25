@@ -36,11 +36,23 @@ public class OnePassHorizontalLayout extends ViewGroup {
         init();
     }
 
+
+    @Override
+    protected MarginLayoutParams generateLayoutParams(LayoutParams p) {
+        return new MarginLayoutParams(super.generateLayoutParams(p));
+    }
+
+    @Override
+    protected MarginLayoutParams generateDefaultLayoutParams() {
+        return new MarginLayoutParams(super.generateDefaultLayoutParams());
+    }
+
     private void init() {
         final Display display = ((WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
         Point deviceDisplay = new Point();
         display.getSize(deviceDisplay);
         deviceWidth = deviceDisplay.x;
+
     }
 
     @Override
@@ -60,6 +72,7 @@ public class OnePassHorizontalLayout extends ViewGroup {
 
             LayoutParams layoutParams = child.getLayoutParams();
             if (layoutParams.width == LayoutParams.MATCH_PARENT) {
+//                if (matchParentPosition != -1) throw new IllegalStateException("One pass horizontal layout was destined to MATCH_PARENT only one view! \nShame on you!");
                 matchParentPosition = i;
             } else {
                 measureChild(child, widthMeasureSpec, heightMeasureSpec);
@@ -103,9 +116,9 @@ public class OnePassHorizontalLayout extends ViewGroup {
                 return;
 
             LayoutParams layoutParams = child.getLayoutParams();
-            child.measure(MeasureSpec.makeMeasureSpec(childWidth, MeasureSpec.UNSPECIFIED), MeasureSpec.makeMeasureSpec(childHeight, MeasureSpec.UNSPECIFIED));
 
             if (layoutParams.width == LayoutParams.MATCH_PARENT) {
+                child.measure(MeasureSpec.makeMeasureSpec(childWidth, MeasureSpec.UNSPECIFIED), MeasureSpec.makeMeasureSpec(childHeight, MeasureSpec.UNSPECIFIED));
                 curWidth = remainingSpace;
                 curHeight = child.getMeasuredHeight();
             } else {

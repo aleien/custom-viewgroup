@@ -10,36 +10,36 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/content"
+            android:ellipsize="end"
+            android:text="WRAP"
             android:textSize="42sp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/content"
+            android:ellipsize="end"
+            android:text="WRAP"
             android:textSize="42sp" />
 
         <TextView
             android:layout_width="132dp"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/content"
+            android:ellipsize="end"
+            android:text="FIXED"
             android:textSize="42sp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/content"
+            android:ellipsize="end"
+            android:text="WRAP"
             android:textSize="42sp" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/content"
+            android:ellipsize="end"
+            android:text="MATCH"
             android:textSize="42sp" />
 
     </ru.yandex.yamblz.ui.views.OnePassHorizontalLayout>

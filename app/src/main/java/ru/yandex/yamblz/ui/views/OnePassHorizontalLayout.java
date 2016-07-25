@@ -8,6 +8,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import ru.yandex.yamblz.R;
 
@@ -21,6 +22,9 @@ public class OnePassHorizontalLayout extends ViewGroup {
     private int mRightWidth;
     private final Rect mTmpContainerRect = new Rect();
     private final Rect mTmpChildRect = new Rect();
+    boolean measuredOnce;
+
+    private LayoutParams mLayoutParams = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
     public OnePassHorizontalLayout(Context context) {
         super(context);
@@ -47,38 +51,36 @@ public class OnePassHorizontalLayout extends ViewGroup {
         int maxWidth = 0;
         int childState = 0;
 
+        int matchParentChildPostition = 0;
+
         for (int i = 0; i < count; i++) {
+            if (measuredOnce) return;
             final View child = getChildAt(i);
             if (child.getVisibility() != GONE) {
+                // measure child
+                mLayoutParams.width = child.getLayoutParams().width;
+                mLayoutParams.height = child.getLayoutParams().height;
 
-                child.setLayoutParams(new LayoutParams(child.getLayoutParams().width, child.getLayoutParams().height));
-                measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
+                child.setLayoutParams(mLayoutParams);
+                measureChildWithMargins(child, MeasureSpec.AT_MOST, 500,
+                        heightMeasureSpec, maxHeight);
 
-                final LayoutParams lp = (LayoutParams) child.getLayoutParams();
-                if (lp.position == LayoutParams.POSITION_LEFT) {
-                    mLeftWidth += Math.max(maxWidth,
-                            child.getMeasuredWidth() + lp.leftMargin + lp.rightMargin);
-                } else if (lp.position == LayoutParams.POSITION_RIGHT) {
-                    mRightWidth += Math.max(maxWidth,
-                            child.getMeasuredWidth() + lp.leftMargin + lp.rightMargin);
-                } else {
-                    maxWidth = Math.max(maxWidth,
-                            child.getMeasuredWidth() + lp.leftMargin + lp.rightMargin);
-                }
-                maxHeight = Math.max(maxHeight,
-                        child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin);
-                childState = combineMeasuredStates(childState, child.getMeasuredState());
+                int childWidth = 300;
+                int childHeight = 200;
+
+                if (maxHeight < childHeight) maxHeight = childHeight;
+
+                maxWidth += childWidth;
+
             }
         }
-
-        maxWidth += mLeftWidth + mRightWidth;
-
-        maxHeight = Math.max(maxHeight, getSuggestedMinimumHeight());
-        maxWidth = Math.max(maxWidth, getSuggestedMinimumWidth());
 
         setMeasuredDimension(resolveSizeAndState(maxWidth, widthMeasureSpec, childState),
                 resolveSizeAndState(maxHeight, heightMeasureSpec,
                         childState << MEASURED_HEIGHT_STATE_SHIFT));
+        measuredOnce = true;
+
+
     }
 
     @Override
@@ -88,45 +90,33 @@ public class OnePassHorizontalLayout extends ViewGroup {
         int leftPos = getPaddingLeft();
         int rightPos = right - left - getPaddingRight();
 
-        final int middleLeft = leftPos + mLeftWidth;
-        final int middleRight = rightPos - mRightWidth;
-
-        final int parentTop = getPaddingTop();
-        final int parentBottom = bottom - top - getPaddingBottom();
+        int childLeft = 0;
 
         for (int i = 0; i < count; i++) {
             final View child = getChildAt(i);
             if (child.getVisibility() != GONE) {
-                final LayoutParams lp = (LayoutParams) child.getLayoutParams();
+                // get child layout params
+                final LayoutParams lp =
+                        (LayoutParams) child.getLayoutParams();
 
-                final int width = child.getMeasuredWidth();
-                final int height = child.getMeasuredHeight();
 
-                if (lp.position == LayoutParams.POSITION_LEFT) {
-                    mTmpContainerRect.left = leftPos + lp.leftMargin;
-                    mTmpContainerRect.right = leftPos + width + lp.rightMargin;
-                    leftPos = mTmpContainerRect.right;
-                } else if (lp.position == LayoutParams.POSITION_RIGHT) {
-                    mTmpContainerRect.right = rightPos - lp.rightMargin;
-                    mTmpContainerRect.left = rightPos - width - lp.leftMargin;
-                    rightPos = mTmpContainerRect.left;
-                } else {
-                    mTmpContainerRect.left = middleLeft + lp.leftMargin;
-                    mTmpContainerRect.right = middleRight - lp.rightMargin;
-                }
-                mTmpContainerRect.top = parentTop + lp.topMargin;
-                mTmpContainerRect.bottom = parentBottom - lp.bottomMargin;
+                // get child measured width /height
+                final int childWidth = 300;
+                final int childHeight = 200;
 
-                Gravity.apply(lp.gravity, width, height, mTmpContainerRect, mTmpChildRect);
+                // find some prerequsites
 
-                child.layout(mTmpChildRect.left, mTmpChildRect.top,
-                        mTmpChildRect.right, mTmpChildRect.bottom);
+
+                //call child.layout
+                child.layout(childLeft, top,
+                        childWidth, childHeight);
+                childLeft += childWidth;
+
             }
         }
     }
 
     public static class LayoutParams extends MarginLayoutParams {
-
         /**
          * The gravity to apply with the View to which these layout parameters
          * are associated.

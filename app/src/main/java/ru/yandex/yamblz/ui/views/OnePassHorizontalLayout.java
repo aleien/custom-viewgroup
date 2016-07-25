@@ -70,12 +70,13 @@ public class OnePassHorizontalLayout extends ViewGroup {
             if (child.getVisibility() == GONE)
                 continue;
 
-            LayoutParams layoutParams = child.getLayoutParams();
-            if (layoutParams.width == LayoutParams.MATCH_PARENT) {
+            MarginLayoutParams lp = new MarginLayoutParams(child.getLayoutParams());
+            child.setLayoutParams(lp);
+            if (lp.width == LayoutParams.MATCH_PARENT) {
 //                if (matchParentPosition != -1) throw new IllegalStateException("One pass horizontal layout was destined to MATCH_PARENT only one view! \nShame on you!");
                 matchParentPosition = i;
             } else {
-                measureChild(child, widthMeasureSpec, heightMeasureSpec);
+                measureChildWithMargins(child, widthMeasureSpec, maxWidth, heightMeasureSpec, maxHeight);
                 maxWidth += Math.max(maxWidth, child.getMeasuredWidth());
             }
 
@@ -126,7 +127,7 @@ public class OnePassHorizontalLayout extends ViewGroup {
                 curHeight = child.getMeasuredHeight();
             }
 
-            child.layout(curLeft, top, curLeft + curWidth, top + curHeight);
+            child.layout(curLeft, 0, curLeft + curWidth, curHeight);
 
             if (maxHeight < curHeight)
                 maxHeight = curHeight;

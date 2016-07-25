@@ -14,7 +14,7 @@
             android:background="#404040"
             android:ellipsize="end"
             android:text="MATCH"
-            android:textSize="42sp" />
+            android:textSize="@dimen/text_size" />
 
         <TextView
             android:layout_width="50dp"
@@ -22,7 +22,7 @@
             android:background="#ffffff"
             android:ellipsize="end"
             android:text="FI"
-            android:textSize="42sp" />
+            android:textSize="@dimen/text_size" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -30,8 +30,70 @@
             android:background="#a7a39d"
             android:ellipsize="end"
             android:text="WR"
-            android:textSize="42sp" />
+            android:textSize="@dimen/text_size" />
 
+
+    </ru.yandex.yamblz.ui.views.OnePassHorizontalLayout>
+
+    <ru.yandex.yamblz.ui.views.OnePassHorizontalLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#a7a39d"
+            android:ellipsize="end"
+            android:text="WR"
+            android:textSize="@dimen/text_size" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#404040"
+            android:ellipsize="end"
+            android:text="MATCH"
+            android:textSize="@dimen/text_size" />
+
+
+        <TextView
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:background="#ffffff"
+            android:ellipsize="end"
+            android:text="FI"
+            android:textSize="@dimen/text_size" />
+
+    </ru.yandex.yamblz.ui.views.OnePassHorizontalLayout>
+
+    <ru.yandex.yamblz.ui.views.OnePassHorizontalLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#a7a39d"
+            android:ellipsize="end"
+            android:text="WRAP"
+            android:textSize="@dimen/text_size" />
+
+        <TextView
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:background="#ffffff"
+            android:ellipsize="end"
+            android:text="FI"
+            android:textSize="@dimen/text_size" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#404040"
+            android:ellipsize="end"
+            android:text="MATCH"
+            android:textSize="@dimen/text_size" />
 
     </ru.yandex.yamblz.ui.views.OnePassHorizontalLayout>
 

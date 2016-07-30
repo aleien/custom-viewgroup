@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
+import timber.log.Timber;
+
 /**
  * Created by user on 17.07.16.
  */
@@ -56,6 +58,12 @@ public class OnePassHorizontalLayout extends ViewGroup {
     }
 
     @Override
+    public void addView(View child, LayoutParams params) {
+        Timber.d("Add view in: child params");
+        super.addView(child, new MarginLayoutParams(params));
+    }
+
+    @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         int count = getChildCount();
@@ -70,16 +78,13 @@ public class OnePassHorizontalLayout extends ViewGroup {
             if (child.getVisibility() == GONE)
                 continue;
 
-            MarginLayoutParams lp = new MarginLayoutParams(child.getLayoutParams());
-            child.setLayoutParams(lp);
+            MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
             if (lp.width == LayoutParams.MATCH_PARENT) {
-//                if (matchParentPosition != -1) throw new IllegalStateException("One pass horizontal layout was destined to MATCH_PARENT only one view! \nShame on you!");
                 matchParentPosition = i;
             } else {
                 measureChildWithMargins(child, widthMeasureSpec, maxWidth, heightMeasureSpec, maxHeight);
-                maxWidth += Math.max(maxWidth, child.getMeasuredWidth());
+                maxWidth += child.getMeasuredWidth();
             }
-
 
             maxHeight = Math.max(maxHeight, child.getMeasuredHeight());
             childState = combineMeasuredStates(childState, child.getMeasuredState());
@@ -91,6 +96,8 @@ public class OnePassHorizontalLayout extends ViewGroup {
         maxHeight = Math.max(maxHeight, getSuggestedMinimumHeight());
         maxWidth = Math.max(maxWidth, getSuggestedMinimumWidth());
 
+        getChildAt(matchParentPosition).measure(MeasureSpec.makeMeasureSpec(remainingSpace, MeasureSpec.UNSPECIFIED), MeasureSpec.makeMeasureSpec(maxHeight, MeasureSpec.UNSPECIFIED));
+
         setMeasuredDimension(resolveSizeAndState(maxWidth, widthMeasureSpec, childState),
                 resolveSizeAndState(maxHeight, heightMeasureSpec, childState << MEASURED_HEIGHT_STATE_SHIFT));
     }
@@ -100,15 +107,8 @@ public class OnePassHorizontalLayout extends ViewGroup {
         final int count = getChildCount();
         int curWidth, curHeight, curLeft, maxHeight;
 
-        final int childLeft = this.getPaddingLeft();
-        final int childTop = this.getPaddingTop();
-        final int childRight = this.getMeasuredWidth() - this.getPaddingRight();
-        final int childBottom = this.getMeasuredHeight() - this.getPaddingBottom();
-        final int childWidth = childRight - childLeft;
-        final int childHeight = childBottom - childTop;
-
         maxHeight = 0;
-        curLeft = childLeft;
+        curLeft = this.getPaddingLeft();
 
         for (int i = 0; i < count; i++) {
             View child = getChildAt(i);
@@ -119,7 +119,6 @@ public class OnePassHorizontalLayout extends ViewGroup {
             LayoutParams layoutParams = child.getLayoutParams();
 
             if (layoutParams.width == LayoutParams.MATCH_PARENT) {
-                child.measure(MeasureSpec.makeMeasureSpec(childWidth, MeasureSpec.UNSPECIFIED), MeasureSpec.makeMeasureSpec(childHeight, MeasureSpec.UNSPECIFIED));
                 curWidth = remainingSpace;
                 curHeight = child.getMeasuredHeight();
             } else {
